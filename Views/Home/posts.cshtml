@@ -1,0 +1,203 @@
+﻿@model WebApplication5.Models.user
+@{
+    ViewBag.Title = "posts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("Profile")
+
+
+
+<div id="container" style="padding-left:120px" class="container col-md-8">
+
+    <input type="hidden" value="@Request.QueryString["usr"]" id="hidden_usr1" />
+    <input type="hidden" value="@Session["USER"]" id="hidden_usr" />
+</div>
+
+<div id="progress" style="display:none">
+    <h4>Loading...</h4>
+</div>
+
+
+<script>
+
+    var pageSize = 10;
+    var pageIndex = 0;
+
+    $(document).ready(function () {
+        GetData();
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() ==
+               $(document).height() - $(window).height()) {
+                GetData();
+            }
+        });
+    });
+
+    function GetData() {
+        $.ajax({
+            type: 'GET',
+            url: '/Default1/getMatches',
+            dataType: 'json',
+            success: function (liked) {
+                var lik = liked;
+                $.ajax({
+                    type: 'GET',
+                    url: '/Default1/getUnlikes',
+                    dataType: 'json',
+                    success: function (unliked) {
+                        var dislike = unliked;
+                        var usr_NAME = $('#hidden_usr1').val();
+                        var usr_ses = $('#hidden_usr').val();
+                        $.ajax({
+                            type: 'GET',
+                            url: '/Home/getPosts',
+                            data: { "pageindex": pageIndex, "pagesize": pageSize, "usr_Name":usr_NAME },
+                            dataType: 'json',
+                            success: function (data) {
+
+                                
+
+                                if (data != null) {
+
+                                    for (var i = 0; i < data.length; i++) {
+                                        var con = "";
+                                        if (usr_ses != "") { //most important check
+                                            con = "<article style=\"padding-left:200px\">  <div class=\"\" style=\"word-wrap:break-word; padding-bottom:0px\"><h3 class=\" caption\"><a href=\"/Posts/view?name=" + data[i].postName + "\" style=\"color:black;text-decoration-line:none;\">" + data[i].caption + "</a></h3></div>\r\n        <div class=\"img-responsive\" style=\"padding-top:0px\">\r\n          <a href=\"/Posts/view?name=" + data[i].postName + "\"><img class=\"img img-responsive\" src=\"/images/posts/" + data[i].postName + "\" width=\"400\" height=\"400\" /></a> <br />\r\n        </div>\r\n        <div style=\"font-size:12px; padding-top:5px\">\r\n            <a href=\"/Posts/view?name=" + data[i].postName + "\" id=\"" + data[i].postId + "_points\"  style=\"color:grey\">\r\n" + data[i].points + " points     </a>\r\n            <a href=\"/Posts/view?name=" + data[i].postName + "\" style=\"color:grey\">\r\n               " + data[i].comments + " comments\r\n            </a>\r\n\r\n        </div>\r\n\r\n        <div style=\"font-size: 25px;padding-top:10px\">\r\n            <div class=\"btn btn-default ";
+                                            for (var k = 0; k < lik.length; k++) {
+                                                var temp1 = String(data[i].postName);
+                                                var temp2 = String(lik[k].FK_postName);
+                                                if (temp1 == temp2) {
+                                                    con = con + "btn-primary";
+                                                    data[i].points--;
+
+                                                }
+                                            }
+
+                                            con = con + "\" id=\"" + data[i].postId + "_upvote\" onclick=\"upvote('" + usr_NAME + "','" + data[i].postName + "','" + data[i].postId + "','" + data[i].points + "');\"" + "><div class=\"glyphicon glyphicon-arrow-up\"><a> </a></div></div>\r\n            <div  id=\"" + data[i].postId + "_downvote\" class=\"btn btn-default ";
+
+                                            for (var l = 0; l < dislike.length; l++) {
+                                                var temp3 = String(data[i].postName);
+                                                var temp4 = String(dislike[l].FK_postName);
+                                                if (temp3 == temp4) {
+                                                    con = con + "btn-primary";
+                                                    data[i].points++;
+
+                                                }
+                                            }
+                                            con = con + "\" onclick=\"downvote('" + usr_NAME + "','" + data[i].postName + "','" + data[i].postId + "','" + data[i].points + "');\"  >\r\n                <div class=\"glyphicon glyphicon-arrow-down\"><a ></a></div>\r\n            </div>\r\n         <a  href=\"/Posts/view?name=" + data[i].postName + "\">    <div class=\"btn btn-default\">\r\n               <div class=\"glyphicon glyphicon-comment\" ></div> </div> </a>   </div>\r\n        <hr>\r\n    </article>";
+
+                                        }
+
+                                        else {
+                                            con = "<article style=\"padding-left:200px\">  <div class=\"\" style=\"word-wrap:break-word; padding-bottom:0px\"><h3 class=\" caption\"><a href=\"/Posts/view?name=" + data[i].postName + "\" style=\"color:black;text-decoration-line:none;\">" + data[i].caption + "</a></h3></div>\r\n        <div class=\"img-responsive\" style=\"padding-top:0px\">\r\n          <a href=\"/Posts/view?name=" + data[i].postName + "\"><img class=\"img img-responsive\" src=\"/images/posts/" + data[i].postName + "\" width=\"400\" height=\"400\" /></a> <br />\r\n        </div>\r\n        <div style=\"font-size:12px; padding-top:5px\">\r\n            <a href=\"/Posts/view?name=" + data[i].postName + "\" style=\"color:grey\">\r\n" + data[i].points + " points\r\n            </a>\r\n            <a href=\"/Posts/view?name=" + data[i].postName + "\" style=\"color:grey\">\r\n               " + data[i].comments + " comments\r\n            </a>\r\n\r\n        </div>\r\n\r\n        <div style=\"font-size: 25px;padding-top:10px\">\r\n            <div class=\"btn btn-default\" onclick=func1(); ><div class=\"glyphicon glyphicon-arrow-up\"><a> </a></div></div>\r\n            <div class=\"btn btn-default\" onclick=func1(); >\r\n                <div class=\"glyphicon glyphicon-arrow-down\"><a></a></div>\r\n            </div>\r\n            <div class=\"btn btn-default\" onclick=func1(); >\r\n                <div class=\"glyphicon glyphicon-comment\"><a href=\"/Posts/view?name=" + data[i].postName + "\"></a></div>\r\n            </div>\r\n        </div>\r\n        <hr>\r\n    </article>";
+
+                                        }
+                                        $("#container").append(con);
+
+                                    }
+                                    pageIndex++;
+                                }
+                            },
+                            beforeSend: function () {
+                                $("#progress").show();
+                            },
+                            complete: function () {
+                                $("#progress").hide();
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Error - ' + errorThrown);
+                            }
+                        });
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
+
+            }
+        });
+    }
+
+
+    function upvote(user1, postName, postId, points) {
+
+        $.ajax({
+            type: 'GET',
+            url: '/Default1/upvote',
+            data: { "userName": user1, "postName": postName },
+            success: function (d) {
+                var v = postId + "_upvote";
+                var v1 = postId + "_points";
+
+                if (d == 0) {
+                    $('#' + v).addClass("btn-primary");
+
+                }
+                else if (d == 1) {
+                    $('#' + v).removeClass("btn-primary");
+                }
+                else if (d == 2) {
+                    $('#' + v).addClass("btn-primary");
+                    v = postId + "_downvote";
+                    $('#' + v).removeClass("btn-primary");
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/Default1/pointchange',
+                    data: { "postId": postId },
+                    success: function (d) {
+                        var v1 = postId + "_points";
+                        $('#' + v1).text(d + " points");
+                    }
+                });
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+
+    }
+
+    function downvote(user1, postName, postId, points) {
+
+        $.ajax({
+            type: 'GET',
+            url: '/Default1/downvote',
+            data: { "userName": user1, "postName": postName },
+            success: function (d) {
+                var v = postId + "_downvote";
+                var v1 = postId + "_points";
+
+                if (d == 0) {
+                    $('#' + v).addClass("btn-primary");
+                }
+                else if (d == 1) {
+                    $('#' + v).removeClass("btn-primary");
+                }
+                else if (d == 2) {
+                    $('#' + v).addClass("btn-primary");
+                    v = postId + "_upvote";
+                    $('#' + v).removeClass("btn-primary");
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/Default1/pointchange',
+                    data: { "postId": postId },
+                    success: function (d) {
+                        var v1 = postId + "_points";
+                        $('#' + v1).text(d + " points");
+                    }
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+
+    }
+
+</script>

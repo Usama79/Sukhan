@@ -1,0 +1,42 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+
+<body>
+    <div> 
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    @{
+                        if (Session["USER"]!=null) { 
+                               <h1>Logged in</h1>
+                        
+                        }
+                    }
+                <h1>Hello!</h1>
+            </div>
+                </div>
+
+           </div> 
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            
+        })
+    </script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,376 @@
+﻿@model WebApplication5.Models.commentViewModel
+@{
+    ViewBag.Title = "view";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<div >*@
+    <article style="padding-left:200px">
+        <div>
+        <div style="word-wrap:break-word; padding-bottom:0px">
+            <h3 class="caption"><a href="/Posts/view?name =" style="color:black;text-decoration-line:none;font-size:30px;font-weight:600">@Model.post.caption</a></h3>
+        </div>
+        <div style="font-size:12px; padding-top:5px">
+            <a href="/Posts/view?name =" id="_points" style="color:grey">@Model.post.points points</a>
+            <a href="/Posts/view?name =" style="color:grey">@Model.post.comments comments</a>
+        </div>
+        <div style="font-size: 25px;padding-top:10px">
+            @if (Session["USER"] != null) { 
+            <div class="btn btn-default " id="_upvote" onclick="upvote('@Session["USER"]','@Model.post.postName','@Model.post.postId','@Model.post.points');">
+               
+              
+                
+                 <div class="glyphicon glyphicon-arrow-up">
+                    <a> </a>
+                </div>
+            </div>
+                <div id="_downvote" class="btn btn-default" onclick="downvote('@Session["USER"]', '@Model.post.postName', '@Model.post.postId', '@Model.post.points');">
+                <div class="glyphicon glyphicon-arrow-down"><a></a></div>
+            </div>
+            }
+            else
+            {
+              <div class="btn btn-default " id="_upvote" onclick="func1();">
+               
+              
+                
+                 <div class="glyphicon glyphicon-arrow-up">
+                    <a> </a>
+                </div>
+            </div>   
+                <div id="_downvote" class="btn btn-default" onclick="func1();">
+                <div class="glyphicon glyphicon-arrow-down"><a></a></div>
+            </div>
+            }
+            
+
+        </div>
+            </div>
+        <div class="container" style="padding-left:100px">
+            <div class="img-responsive" style="padding-top:0px">
+                <a href="/Posts/view?name ="><img class="img img-responsive" src="/images/posts/@Request.QueryString["name"]" width="550" height="550" /></a> <br />
+            </div>
+        </div>
+       
+    </article>
+    <div class="container" id=" comments" style="padding-left:200px;padding-right:318px">
+        <hr>
+        <br />
+        <label style="font-size: 16px; font-weight: 600;">@Model.post.comments comments</label>
+        <hr> 
+        @if (Session["USER"] == null || Session["USER"]=="logout") { 
+        <div class="media">
+            <div class="media-left">
+                <img src="/images/avatar.png" class="media-object" style="width:40px">
+            </div>
+            <div class="media-body">
+                <div class="comment-div">
+                    <textarea id="comment_text" style="font-size: 10pt; width: 600px; height: 40px;overflow: auto; resize:none" placeholder="Write your comment..." required></textarea>
+                </div>
+                <div class="right" ><button class="btn btn-sm btn-primary pull-right" onclick="func1();">post</button></div>
+            </div>
+            
+        </div>
+        }
+        else
+        {
+            <div class="media">
+            <div class="media-left">
+                <img src="@Session["AVATAR"]" class="media-object" style="width: 40px; height:40px">
+            </div>
+            <div class="media-body">
+                <form>
+                <div class="comment-div">
+                     <textarea id="comment_text"  style="font-size: 10pt; width: 600px; height: 40px;overflow: auto; resize:none" placeholder="Write your comment..." required></textarea>
+                </div>
+                <div class="right" ><button type="submit" class="btn btn-sm btn-primary pull-right" onclick="addComent();">post</button></div>
+           </form>
+             </div>
+            
+        </div>
+        }
+
+        @if (Session["USER"] != null) {
+        <input id="usr_hidden" type="hidden" value='@Session["USER"].ToString()' />
+        }
+        else
+        {
+            <input id="usr_hidden" type="hidden" value=null />
+        }
+       @for (int i = 0; i < Model.comments.Count; i++)
+       {
+                <div class="media">
+            <div class="media-left">
+                <img src="@Model.comments[i].user_picture" class="media-object" style="width: 40px; height:40px">
+            </div>
+            <div class="media-body">
+                <div class="media-heading" style="font-weight:700;font-size:13pt"><a href="/Home/posts?usr=@Model.comments[i].FK_username">@Model.comments[i].FK_username</a> 
+                @if (@Model.post.FK_username == @Model.comments[i].FK_username)
+                {
+                    <label style="font-size:7pt;color:green;font-weight:600">OP</label>
+                }
+                 <label id="points_@Model.comments[i].Id" style="font-size:7pt;color:grey;padding-left:10px">@Model.comments[i].points points</label> 
+                    <time class="timeago" datetime="@Model.comments[i].date_time" style="font-size: 7pt; color: grey;padding-left:10px">@Model.comments[i].date_time</time>
+                </div>
+                
+                <div class="comment-div" style ="font-size: 10pt; width: 600px;">
+                     @Model.comments[i].comment_Text
+                </div>
+                <br />
+                <div class="btn-group-sm" style="padding-left:0px"> <div id="cupvote_@Model.comments[i].Id" onclick="upvote_comment('@Model.comments[i].Id');" class="btn-default btn-sm glyphicon glyphicon-arrow-up" style="color:grey;"></div><div id="@Model.comments[i].Id" onclick="downvote_comment('@Model.comments[i].Id');" class="btn-default btn-sm glyphicon glyphicon-arrow-down" style="color:grey;"></div> </div>
+                
+          
+             </div>
+            
+        </div>        
+       }
+    </div>
+@*</div>*@
+
+@if (Session["USER"] != null) { 
+
+<script>
+
+
+    $(document).ready(function () {
+        var postName = ("@Request.QueryString["name"]");
+        $.ajax({
+            type: 'POST',
+            url: '/Posts/isLike',
+            data: { "postName": postName },
+            success: function (data) {
+                if (data == 1) {
+                    $("#_upvote").addClass("btn-primary");
+
+                }
+                else {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Posts/isDislike',
+                        data: { "postName": postName },
+                        success: function (data1) {
+                            if (data1 == 1) {
+                                $("#_downvote").addClass("btn-primary");
+
+                            }
+
+                        }
+                    })
+
+                }
+
+            }
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/Posts/getLikedComments',
+            dataType: 'json',
+            data:{"postName":postName},
+            success: function (liked) {
+                for (var i = 0; i < liked.length; i++) {
+                    var up = "cupvote_" + liked[i].FK_commentId;
+                    $('#' + up).css('color', 'blue');
+                }
+             }
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/Posts/getdisLikedComments',
+            dataType: 'json',
+            data: { "postName": postName },
+            success: function (disliked) {
+                for (var i = 0; i < disliked.length; i++) {
+                    var up = disliked[i].FK_commentId;
+                    $('#' + up).css('color', 'blue');
+                }
+            }
+        });
+    })
+    </script>
+}
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery("time.timeago").timeago();
+    });
+
+    function upvote_comment(comment_id){
+        var usr=$("#usr_hidden").val();
+        if (usr=="null")
+        {
+            func1();
+            return;
+        }
+        else{
+            var up="cupvote_"+comment_id;
+            var down=comment_id;
+
+            $.ajax({
+                type: 'POST',
+                url: '/Posts/upvoteComment',
+                data: { "comment_id": comment_id},
+                success: function (data) {
+                    if (data==0){
+                        $('#' + up).css('color', 'blue');
+                        $('#'+down).css('color','grey');
+                        
+                    }
+                    else if (data == 1){
+                        $('#' + up).css('color', 'grey');
+                    }
+                    else{
+                        $('#' + up).css('color', 'blue');
+                        $('#'+down).css('color','grey');
+                    }
+
+                }
+
+            });
+            $.ajax({
+                type: 'GET',
+                url: '/Posts/commentpointchange',
+                data: { "comment_Id": comment_id },
+                success: function (d) {
+                    var v1 = "points_"+comment_id;
+                    $('#' + v1).text(d + " points");
+                }
+            });
+        }
+    }
+        function downvote_comment(comment_id){
+            var usr=$("#usr_hidden").val();
+            if (usr=="null")
+            {
+                func1();
+                return;
+            }
+            else{
+                var up="cupvote_"+comment_id;
+                var down=comment_id;
+                $.ajax({
+                    type: 'POST',
+                    url: '/Posts/downvoteComment',
+                    data: { "comment_id": comment_id},
+                    success: function (data) {
+                        if (data==0){
+                            $('#'+up).css('color','grey');
+                            $('#' + down).css('color', 'blue');
+                        
+                        }
+                        else if (data == 1){
+                            $('#' + down).css('color', 'grey');
+                        }
+                        else{
+                            $('#' + up).css('color', 'grey');
+                            $('#' + down).css('color', 'blue');
+                        }
+
+                    }
+
+                });
+                $.ajax({
+                    type: 'GET',
+                    url: '/Posts/commentpointchange',
+                    data: { "comment_Id": comment_id },
+                    success: function (d) {
+                        var v1 = "points_"+comment_id;
+                        $('#' + v1).text(d + " points");
+                    }
+                });
+            }
+        }
+    function addComent() {
+        var content = $.trim($('#comment_text').val());
+        if (content != "") {
+            var postName = ("@Request.QueryString["name"]");
+            $.ajax({
+                type: 'POST',
+                url: '/Posts/addComment',
+                data: { "content": content, "postName": postName },
+                success: function () {
+                    location.reload();
+
+                }
+
+            })
+        }
+    }
+    function upvote(user1, postName, postId, points) {
+
+        $.ajax({
+            type: 'GET',
+            url: '/Default1/upvote',
+            data: { "userName": user1, "postName": postName },
+            success: function (d) {
+                var v = "_upvote";
+                var v1 = "_points";
+
+                if (d == 0) {
+                    $('#' + v).addClass("btn-primary");
+
+                }
+                else if (d == 1) {
+                    $('#' + v).removeClass("btn-primary");
+                }
+                else if (d == 2) {
+                    $('#' + v).addClass("btn-primary");
+                    v = "_downvote";
+                    $('#' + v).removeClass("btn-primary");
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/Default1/pointchange',
+                    data: { "postId": postId },
+                    success: function (d) {
+                        var v1 = "_points";
+                        $('#' + v1).text(d + " points");
+                    }
+                });
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+
+    }
+
+    function downvote(user1, postName, postId, points) {
+
+        $.ajax({
+            type: 'GET',
+            url: '/Default1/downvote',
+            data: { "userName": user1, "postName": postName },
+            success: function (d) {
+                var v ="_downvote";
+                var v1 ="_points";
+
+                if (d == 0) {
+                    $('#' + v).addClass("btn-primary");
+                }
+                else if (d == 1) {
+                    $('#' + v).removeClass("btn-primary");
+                }
+                else if (d == 2) {
+                    $('#' + v).addClass("btn-primary");
+                    v = "_upvote";
+                    $('#' + v).removeClass("btn-primary");
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/Default1/pointchange',
+                    data: { "postId": postId },
+                    success: function (d) {
+                        var v1 = "_points";
+                        $('#' + v1).text(d + " points");
+                    }
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+
+    }
+
+</script>

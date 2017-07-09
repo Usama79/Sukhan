@@ -1,0 +1,104 @@
+﻿@model WebApplication5.Models.user
+@{
+    ViewBag.Title = "View1";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Session["USER"] == null || Session["USER"] == "logout")
+{
+    <script>
+         window.location.replace('@Url.Action("hot","Default1")');
+        </script>
+}
+else
+{
+    <div class="container" >
+      
+       
+            <div class="col-md-4" style="font-family:'Global Serif'">
+                <label class="col-md-6" style="position:fixed; left:30px; top:60px; font-size:35px">Settings</label>
+            </div>
+        
+            <br />
+        
+            <div class="changedReg col-md-8" style="left:350px; overflow: auto; max-height: inherit ;font-family:cursive">
+                <div class="form-group">
+                    <h5>Avatar</h5>
+                    @using (Html.BeginForm("saveChanges", "Settings", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {     <input id="imageBrowse" name="imageBrowse" type="file" style="display:none;" />
+                         <div class="row">
+                        <div class=" col-md-2" id="imagePreview">
+                            @if (Session["AVATAR"] == null)
+                            {
+                                <img class="img-responsive" id="profilePicture" src="~/images/avatar.png" width="100" height="100" style="border-radius: 10px;" />
+                            }
+                            else
+                            {
+                                <img src=@Session["AVATAR"] id="profilePicture" width="100" height="100" style="border-radius: 10px;" />
+                            }
+
+                            <div style="padding-top:5px">
+                                <a class="glyphicon glyphicon-upload" onclick="changeAvatar();"></a>
+                                <a href="#" onclick="deleteAvatar();" class="glyphicon  glyphicon-trash pull-right"></a>
+                            </div>
+
+
+                          
+
+
+                        </div>
+                    </div>
+                        <input type="hidden" name="hid_del" id="hid_del" value="" />
+                        <br />
+                        <h5>First Name</h5>
+                        <input type="text" name="fname" value="@Model.fname"><br><br /> <br />
+                        <h5>Last Name</h5>
+                        <input type="text" name="lname" value="@Model.lname"><br><br /> <br />
+                        <h5>Email</h5>
+                        <input type="email" name="email" value="@Model.email"><br><br /> <br />
+                        <h5>New Password</h5>
+                        <input type="password" name="password" value="" placeholder=""><br><br /> <br />
+                        <h5>Username</h5>
+                        <input onchange="validateUser();" onkeypress="validateUser();" oninput="validateUser();" onkeyup="validateUser();" type="text" id="txt_username" name="username" value="@Model.username"><br>
+                        <span id="userAl" style="font-size:12px; color:red "></span><br><br /> <br />
+
+                        <button id="btn_savechanges" type="submit" class="btn btn-primary pull-right">Save Changes</button>
+                    }
+                </div>
+            </div>
+       
+
+        </div>
+
+}
+
+<script>
+    $(document).ready(function () {
+        $("#imageBrowse").change(function () {
+            var File = this.files;
+            if (File && File[0]) {
+                ReadImage(File[0]);
+            }
+
+        })
+    })
+    var ReadImage = function (file) {
+        var reader = new FileReader;
+       // var image = new Image;
+        reader.readAsDataURL(file);
+        //img.src = _file.target.result;
+        reader.onload = function (_file) {
+            $("#profilePicture").attr('src', _file.target.result);
+            $("#hid_del").attr('val', "delete");
+        }
+    }
+    function changeAvatar()
+    {
+        $("#imageBrowse").click();
+    }
+
+    function deleteAvatar() {
+        $("#profilePicture").attr('src', "/images/avatar.png");
+        $("#hid_del").val("delete");
+    }
+            
+</script>

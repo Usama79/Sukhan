@@ -1,0 +1,29 @@
+﻿@model WebApplication5.Models.searchModel
+@{
+    ViewBag.Title = "Seach";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+
+    <div style=" padding-top:50px;">
+        @*<h2>Search:@Request.QueryString["query"]</h2><br />*@
+        <h4>Total Results:@Model.posts.Count</h4>
+        <br />
+        @for (int i = 0; i < Model.posts.Count; i++)
+        {
+            <article class="media">
+                <div class="media-left">
+                    <a href="/Posts/view?name=@Model.posts[i].postName"><img src="~/images/posts/@Model.posts[i].postName" height="200" width="200" /></a>
+                </div>
+                <div class="media-body" style="color:black;">
+                <a class="media-heading" style="color:black;font-size:25px;font-weight:700" href="/Posts/view?name=@Model.posts[i].postName">@Model.posts[i].caption</a><br /><br />
+                    <a href="/Posts/view?name=@Model.posts[i].postName" style="color:black">@Model.posts[i].points points</a>
+                </div>
+            </article><br />
+        }
+
+      
+      
+        </div>
+</div>

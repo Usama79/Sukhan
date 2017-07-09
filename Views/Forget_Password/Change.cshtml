@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "Change";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding-left:300px">
+<h1>Forgot Password?</h1><br /><br />
+@using (Html.BeginForm())
+{
+
+    <label>Enter new password</label><br />
+    <div>
+        <input id="new_forget" name="new_forget" type="text" style="height:40px;width:400px" placeholder="New Password" required><br /><br /><br />
+        <label>Confirm new password</label><br />
+        <input id="cnfrm_forget" name="cnfrm_forget" type="text" style="height:40px;width:400px" placeholder="New Password" required><br />
+        <label id="lb_match_error" style="font-size:12px" hidden></label>
+        <br /><br /><br />
+        <button class="btn btn-default " type="button" onclick="ChangePassword();" style="height:35px;">Change Password</button>
+    </div>
+
+}
+</div>
+<script>
+    function ChangePassword() {
+        var v1 = jQuery("#new_forget").val().toString();
+        var v2 = jQuery("#cnfrm_forget").val().toString();
+        if (v1 != v2) {
+            jQuery("lb_match_error").show();
+            jQuery("#lb_match_error").text("Password does not match");
+            jQuery("#lb_match_error").css("color", "red");
+        }
+        jQuery.ajax({
+            url: '@Url.Action("change_password","Forget_Password")',
+            method: "POST",
+            cache: false,
+            data: { new_pass: v1 },
+            beforeSend: function () {
+
+            },
+            complete: function () {
+
+            }
+
+        }).done(function (d) {
+            window.location.href = "/Default1/hot/"
+        })
+    }
+</script>
+

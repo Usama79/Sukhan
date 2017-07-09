@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewBag.Title = "SendEmail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding-left:300px">
+    <h1>Forgot Password?</h1><br /><br />
+   @using (Html.BeginForm())
+                {
+
+        <label>Your Username</label><br />
+        <div>
+        <input id="username_forget" name="username_forget" type="text" style="height:40px;width:400px" placeholder="Username" required><br />
+            <label id="lb_usr_error" style="font-size:12px" hidden></label>
+            <br/><br /><br />
+        <button id="btn_email"class="btn btn-default " type="button" onclick="SendEmail();" style="height:35px;" >Send Email</button>
+            </div>
+
+   }
+</div>
+
+<script>
+    function SendEmail() {
+        var v1 = jQuery("#username_forget").val().toString();
+        jQuery.ajax({
+            url: '@Url.Action("send_email","Forget_Password")',
+            method: "POST",
+            cache: false,
+            data: { username: v1},
+            beforeSend: function () {
+                $("#btn_email").hide();
+            },
+            complete: function () {
+
+            }
+
+        }).done(function (d) {
+            if (d == 0) {
+                jQuery("#lb_usr_error").text("Invalid Username!");
+                jQuery("#lb_usr_error").css("color", "red");
+                $('#lb_usr_error').show();
+                $("#btn_email").show();
+
+            }
+            else {
+                $('#lb_usr_error').hide();
+                window.location.replace("Verify");
+
+            }
+        })
+    }
+</script>

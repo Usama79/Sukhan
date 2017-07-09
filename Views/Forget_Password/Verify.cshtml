@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "Verify";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding-left:300px">
+    <h1>Forgot Password?</h1><br /><br />
+    @using (Html.BeginForm())
+    {
+        <p>
+            A 4-digit code is sent to your email address
+        </p>
+        <br/>
+
+        <label>Enter the verification code</label><br />
+        <div>
+            <input id="code_forget" name="code_forget" type="text" style="height:40px;width:400px" placeholder="e.g 1234" required><br />
+            <label id="lb_code_error" style="font-size:12px" hidden></label>
+            <br /><br /><br />
+            <button class="btn btn-default " type="button" onclick="codeVerify();" style="height:35px;">Submit Code</button>
+        </div>
+
+    }
+</div>
+<script>
+    function codeVerify() {
+        var v1 = jQuery("#code_forget").val().toString();
+        jQuery.ajax({
+            url: '@Url.Action("verify_code","Forget_Password")',
+            method: "POST",
+            cache: false,
+            data: { code: v1 },
+            beforeSend: function () {
+
+            },
+            complete: function () {
+
+            }
+
+        }).done(function (d) {
+            if (d == 0) {
+                jQuery("#lb_code_error").text("Invalid Code!");
+                jQuery("#lb_code_error").css("color", "red");
+                $('#lb_code_error').show();
+            }
+            else {
+                $('#lb_code_error').hide();
+                window.location.replace("Change");
+
+            }
+        })
+    }
+</script>

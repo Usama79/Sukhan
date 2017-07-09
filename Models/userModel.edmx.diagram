@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c2a308ea902f48c48c9072bc6d382487" Name="Diagram1">
+        <EntityTypeShape EntityType="userModel.user" PointX="0.75" PointY="5.75" Width="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="userModel.Post" Width="1.5" PointX="3" PointY="5.5" />
+        <EntityTypeShape EntityType="userModel.user_like" Width="1.5" PointX="3.25" PointY="10.125" />
+        <EntityTypeShape EntityType="userModel.Comment" Width="1.5" PointX="3" PointY="2" />
+        <EntityTypeShape EntityType="userModel.user_dislike" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="userModel.comment_dislike" Width="1.5" PointX="5.25" PointY="3.25" />
+        <EntityTypeShape EntityType="userModel.comment_like" Width="1.5" PointX="5.25" PointY="5.75" />
+        <AssociationConnector Association="userModel.FK_comment_dislike_ToTable" />
+        <AssociationConnector Association="userModel.FK_comment_like_ToComment" />
+        <EntityTypeShape EntityType="userModel.Code" Width="1.5" PointX="7.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
