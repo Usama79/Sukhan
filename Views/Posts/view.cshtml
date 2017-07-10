@@ -76,8 +76,15 @@
         {
             <div class="media">
             <div class="media-left">
+                @if (Session["AVATAR"] == null)
+                {
+                                    <img src="~/images/avatar.png" class="media-object" style="width: 40px; height:40px">
+
+                }
+                else { 
                 <img src="@Session["AVATAR"]" class="media-object" style="width: 40px; height:40px">
-            </div>
+                }
+                    </div>
             <div class="media-body">
                 <form>
                 <div class="comment-div">
@@ -101,7 +108,14 @@
        {
                 <div class="media">
             <div class="media-left">
+                @if (Model.comments[i].user_picture != null) { 
                 <img src="@Model.comments[i].user_picture" class="media-object" style="width: 40px; height:40px">
+                }
+                else
+                {
+                                 <img src="~/images/avatar.png" class="media-object" style="width: 40px; height:40px">
+   
+                }
             </div>
             <div class="media-body">
                 <div class="media-heading" style="font-weight:700;font-size:13pt"><a href="/Home/posts?usr=@Model.comments[i].FK_username">@Model.comments[i].FK_username</a> 

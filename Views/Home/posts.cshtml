@@ -59,7 +59,7 @@
 
                                 
 
-                                if (data != null) {
+                                if (data.length!=0) {
 
                                     for (var i = 0; i < data.length; i++) {
                                         var con = "";
@@ -98,6 +98,9 @@
 
                                     }
                                     pageIndex++;
+                                }
+                                else {
+                                    $("#container").append("<h3>No posts to show</h3>");
                                 }
                             },
                             beforeSend: function () {
