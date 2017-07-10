@@ -11,6 +11,8 @@
 <div id="container" style="padding-left:120px" class="container col-md-8">
 
     <input type="hidden" value="@Model.username" id="hidden_usr" />
+    <input type="hidden" value="" id="hidden_p" />
+
 </div>
 
 <div id="progress" style="display:none">
@@ -58,7 +60,9 @@
 
 
 
-                                if (data.length!=0) {
+                                if (data.length != 0) {
+                                    $("#hidden_p").val("Yes");
+
 
                                     for (var i = 0; i < data.length; i++) {
                                         var con = "";
@@ -99,7 +103,10 @@
                                     pageIndex++;
                                 }
                                 else {
-                                    $("#container").append("<h3>No posts to show</h3>");
+                                    var v = $("#hidden_p").val();
+                                    if (v != "Yes") {
+                                        $("#container").append("<h3>No posts to show</h3>");
+                                    }
                                 }
                             },
                             beforeSend: function () {
